@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tutor Dashboard - DoubtX</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #111827, #0f172a);
+      color: white;
+    }
+
+    header {
+      background-color: #1f2937;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 24px;
+      color: white;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    .card {
+      background-color: #1e293b;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      margin-top: 20px;
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+      color: #8A2BE2;
+    }
+
+    .btn {
+      background-color: #8A2BE2;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #a855f7;
+    }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+    }
+
+    .toggle-label span {
+      margin-left: 10px;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 99;
+    }
+
+    .modal-content {
+      background-color: #1e293b;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      color: white;
+      text-align: center;
+    }
+
+    .modal-content textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      margin-top: 15px;
+      resize: none;
+      font-size: 14px;
+      background-color: #374151;
+      color: white;
+    }
+
+    .credit-floating {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      color: white;
+      display: none;
+      width: 240px;
+      z-index: 100;
+      border: 1px solid #8A2BE2;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .credit-floating h4 {
+      margin-bottom: 10px;
+      color: #8A2BE2;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>DOUBT<span style="color:#8A2BE2;">X</span> Tutor Dashboard</h1>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div class="toggle-label">
+        <input type="checkbox" id="creditToggle" />
+        <span>Enable Credit System</span>
+      </div>
+      <button class="btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Pending Doubts</h2>
+      <p>No. of doubts pending: <strong>3</strong></p>
+      <button class="btn" onclick="openSolveModal()">Solve Doubt</button>
+    </div>
+  </div>
+
+  <!-- Modal for solving doubts -->
+  <div class="modal" id="solveModal">
+    <div class="modal-content">
+      <h3>Solve Doubt</h3>
+      <p><strong>Doubt ID:</strong> <span id="doubtId">#12345</span></p>
+      <textarea placeholder="Write your solution here..." id="solutionText"></textarea>
+      <br><br>
+      <button class="btn" onclick="submitSolution()">Submit</button>
+      <button class="btn" style="background:#374151; margin-left: 10px;" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Floating credit info -->
+  <div class="credit-floating" id="creditFloating">
+    <h4>Credit System Active</h4>
+    <p>Credits per doubt: <strong>10</strong></p>
+    <p>Total earned: <strong id="earnedCredits">0</strong></p>
+  </div>
+
+  <script>
+    const creditToggle = document.getElementById('creditToggle');
+    let creditSystemEnabled = false;
+    let totalCredits = 0;
+
+    creditToggle.addEventListener('change', () => {
+      creditSystemEnabled = creditToggle.checked;
+      const floating = document.getElementById('creditFloating');
+      floating.style.display = creditSystemEnabled ? 'block' : 'none';
+      alert('Credit system ' + (creditSystemEnabled ? 'enabled' : 'disabled'));
+    });
+
+    function openSolveModal() {
+      document.getElementById('solveModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('solveModal').style.display = 'none';
+      document.getElementById('solutionText').value = '';
+    }
+
+    function submitSolution() {
+      const solution = document.getElementById('solutionText').value.trim();
+      if (solution === '') {
+        alert("Solution can't be empty!");
+        return;
+      }
+
+      if (creditSystemEnabled) {
+        totalCredits += 10;
+        document.getElementById('earnedCredits').textContent = totalCredits;
+      }
+
+      alert(`Doubt solved!\nCredit system: ${creditSystemEnabled ? 'ON' : 'OFF'}\nSolution: ${solution}`);
+      closeModal();
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/index.html';
+    }
+  </script>
+
+</body>
+</html>

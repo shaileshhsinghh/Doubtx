@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NSU Resources – DoubtX</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #111827, #0f172a);
+    }
+
+    .card {
+      background-color: #1f2937;
+      box-shadow: 0 8px 20px rgba(128, 90, 213, 0.15);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      box-shadow: 0 12px 32px rgba(168, 85, 247, 0.3);
+      transform: scale(1.03);
+    }
+
+    .resource-link {
+      background-color: #1f2937;
+      border: 1px solid #374151;
+      box-shadow: 0 6px 18px rgba(147, 51, 234, 0.15);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .resource-link:hover {
+      background-color: #2d3748;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(147, 51, 234, 0.3);
+    }
+
+    button {
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+
+<body class="text-white min-h-screen px-6 pb-12">
+  <!-- Navbar -->
+  <nav class="bg-transparent p-4 flex justify-between items-center border-b border-gray-800 shadow">
+    <h1 class="text-xl font-bold">
+      <span class="text-white">Doubt</span><span class="text-purple-400">X</span><span class="text-white"> – Resources</span>
+    </h1>
+    <a href="dashboard.html"
+       class="text-sm bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg font-medium transition duration-200 shadow-md">
+      ⬅ Back to Dashboard
+    </a>
+  </nav>
+  
+
+  <div class="max-w-6xl mx-auto mt-10">
+    <h1 class="text-4xl font-extrabold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+      🎓 Specializations
+    </h1>
+    <p class="text-lg text-gray-300 text-center mb-10">Explore learning resources tailored to your department.</p>
+
+    <!-- Specialization Buttons -->
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('cse')">💻 CSE</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('ece')">🔌 ECE</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('arch')">🏛 Architecture</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('mns')">📐 MNS</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('bba')">📊 BBA</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('eco')">📈 Economics</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('fin')">💰 Finance</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('mkt')">📣 Marketing</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('hrm')">👥 HRM</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('ais')">🧾 AIS</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('eng')">📚 English</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('law')">⚖ Law</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('soc')">🌐 Sociology</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('psy')">🧠 Psychology</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('gov')">🏛 Governance</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('phar')">💊 Pharmacy</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('bio')">🧬 Biotech</button>
+      <button class="card p-6 rounded-xl text-center w-full" onclick="showResources('env')">🌱 Environment</button>
+    </div>
+
+    <!-- Resource Display -->
+    <div id="resource-content" class="space-y-6">
+      <p class="text-gray-400 text-center">Select a specialization to view resources.</p>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const resourceData = {
+      cse: [
+        { title: "Intro to Programming", type: "🎥 Video", link: "#" },
+        { title: "Data Structures Notes", type: "📘 PDF", link: "#" },
+      ],
+      ece: [{ title: "Basic Electronics", type: "🎥 Video", link: "#" }],
+      arch: [{ title: "Design Principles", type: "📘 PDF", link: "#" }],
+      mns: [{ title: "Mathematical Modeling", type: "🎥 Video", link: "#" }],
+      bba: [{ title: "Principles of Management", type: "📘 PDF", link: "#" }],
+      eco: [{ title: "Microeconomics Basics", type: "🎥 Video", link: "#" }],
+      fin: [{ title: "Investment Strategies", type: "📘 PDF", link: "#" }],
+      mkt: [{ title: "Marketing 101", type: "🎥 Video", link: "#" }],
+      hrm: [{ title: "Employee Relations", type: "📘 PDF", link: "#" }],
+      ais: [{ title: "Accounting Basics", type: "📘 PDF", link: "#" }],
+      eng: [{ title: "Literary Analysis Guide", type: "📘 PDF", link: "#" }],
+      law: [{ title: "Constitutional Law", type: "📘 PDF", link: "#" }],
+      soc: [{ title: "Social Theory", type: "🎥 Video", link: "#" }],
+      psy: [{ title: "Behavioral Psychology", type: "🎥 Video", link: "#" }],
+      gov: [{ title: "Political Theory", type: "📘 PDF", link: "#" }],
+      phar: [{ title: "Drug Classification", type: "📘 PDF", link: "#" }],
+      bio: [{ title: "Genetics Explained", type: "🎥 Video", link: "#" }],
+      env: [{ title: "Climate Change Guide", type: "📘 PDF", link: "#" }]
+    };
+
+    function showResources(dept) {
+      const container = document.getElementById('resource-content');
+      const resources = resourceData[dept] || [];
+
+      if (!resources.length) {
+        container.innerHTML = `<p class="text-center text-gray-400">No resources available yet for <strong>${dept.toUpperCase()}</strong>.</p>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <h2 class="text-2xl font-bold text-center mb-4 text-blue-400">Resources for ${dept.toUpperCase()}</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          ${resources.map(item => `
+            <a href="${item.link}" target="_blank" class="resource-link p-4 rounded-xl block shadow-md">
+              <div class="text-lg font-semibold text-white">${item.title}</div>
+              <div class="text-sm text-gray-400 mt-1">${item.type}</div>
+            </a>
+          `).join('')}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

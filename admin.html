@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doubtx Admin Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div class="p-6">
+    <h1 class="text-3xl font-bold mb-4">DOUBTX - Admin Panel</h1>
+
+    <!-- Password Entry -->
+    <div class="mb-4">
+      <input id="admin-password" type="password" placeholder="Enter Admin Password" class="p-2 rounded bg-gray-800 text-white border border-gray-600" />
+      <button onclick="unlockPanel()" class="ml-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded">Unlock</button>
+    </div>
+
+    <!-- Panel -->
+    <div id="panel" class="hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Registered Users</h2>
+        <button onclick="downloadJSON()" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Export JSON</button>
+      </div>
+
+      <!-- Search -->
+      <input type="text" id="search" oninput="filterUsers()" placeholder="Search users..." class="w-full p-2 mb-4 rounded bg-gray-800 border border-gray-600 text-white"/>
+
+      <!-- User List -->
+      <div id="user-list" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <script>
+    const adminPassword = "admin123"; // Must match the server's ADMIN_SECRET
+    let allUsers = {};
+
+    async function unlockPanel() {
+      const inputPassword = document.getElementById("admin-password").value;
+      if (inputPassword !== adminPassword) {
+        alert("Incorrect password");
+        return;
+      }
+
+      document.getElementById("panel").classList.remove("hidden");
+      await loadUsers();
+    }
+
+    async function loadUsers() {
+      try {
+        const res = await fetch("/admin/users", {
+          headers: {
+            "x-admin-secret": adminPassword
+          }
+        });
+        allUsers = await res.json();
+        renderUsers(allUsers);
+      } catch (err) {
+        alert("Failed to load users.");
+      }
+    }
+
+    function renderUsers(users) {
+      const list = document.getElementById("user-list");
+      list.innerHTML = "";
+
+      Object.entries(users).forEach(([username, data]) => {
+        const userBox = document.createElement("div");
+        userBox.className = "p-3 bg-gray-800 rounded shadow-md";
+
+        userBox.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <strong>${username}</strong><br>
+              ID: ${data.id} <br>
+              Role: <span class="text-blue-300">${data.type}</span><br>
+              Merits: <span class="text-yellow-300">${data.merits}</span>
+            </div>
+            <button onclick="resetMerits('${username}')" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded mt-1">Reset</button>
+          </div>
+        `;
+        list.appendChild(userBox);
+      });
+    }
+
+    function filterUsers() {
+      const search = document.getElementById("search").value.toLowerCase();
+      const filtered = Object.fromEntries(
+        Object.entries(allUsers).filter(([username]) =>
+          username.toLowerCase().includes(search)
+        )
+      );
+      renderUsers(filtered);
+    }
+
+    async function resetMerits(username) {
+      const amount = prompt(`Enter new merit value for ${username}:`);
+      if (amount == null || isNaN(amount)) return alert("Invalid input");
+
+      try {
+        await fetch("/admin/reset", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-secret": adminPassword
+          },
+          body: JSON.stringify({ username, amount: parseInt(amount) })
+        });
+        await loadUsers();
+      } catch (err) {
+        alert("Failed to reset merits.");
+      }
+    }
+
+    function downloadJSON() {
+      const blob = new Blob([JSON.stringify(allUsers, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "users.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  </script>
+</body>
+</html>

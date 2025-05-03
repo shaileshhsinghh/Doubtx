@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Doubt – DoubtX</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #111827, #0f172a);
+    }
+    .card {
+      background-color: #1f2937;
+      box-shadow: 0 8px 20px rgba(128, 90, 213, 0.15);
+      transition: all 0.3s ease-in-out;
+    }
+    .card:hover {
+      box-shadow: 0 12px 32px rgba(168, 85, 247, 0.3);
+    }
+    button {
+      transition: all 0.2s ease-in-out;
+    }
+    button:hover {
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen">
+
+  <!-- Header -->
+  <nav class="bg-[#111827] p-4 flex justify-between items-center border-b border-gray-700">
+    <h1 class="text-xl font-bold text-white">Doubt<span class="text-purple-500">X</span> – Upload Doubt</h1>
+    <a href="dashboard.html"
+       class="text-sm bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition duration-200 shadow-md">
+      ⬅ Back to Dashboard
+    </a>
+  </nav>
+
+  <!-- Main Section -->
+  <div class="flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-2xl card p-8 rounded-2xl">
+      <h1 class="text-4xl font-extrabold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+        📤 Upload Your Doubt
+      </h1>
+
+      <form id="doubt-form" enctype="multipart/form-data" class="space-y-5">
+        <textarea
+          id="doubt-text"
+          rows="4"
+          placeholder="Type your doubt here..."
+          class="w-full p-3 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+        ></textarea>
+
+        <input
+          type="file"
+          id="doubt-image"
+          accept="image/*"
+          class="block w-full text-white bg-gray-700 rounded-xl p-3 focus:outline-none"
+        />
+
+        <button
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-semibold transition duration-200 shadow-md"
+        >
+          Submit Doubt
+        </button>
+      </form>
+
+      <p id="upload-msg" class="text-sm text-center mt-4 text-green-400 hidden">Uploading...</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("doubt-form");
+      const msg = document.getElementById("upload-msg");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const text = document.getElementById("doubt-text").value;
+        const image = document.getElementById("doubt-image").files[0];
+
+        if (!text && !image) {
+          msg.textContent = "Please enter a doubt or select an image.";
+          msg.classList.remove("hidden", "text-green-400");
+          msg.classList.add("text-red-400");
+          return;
+        }
+
+        msg.textContent = "Uploading...";
+        msg.classList.remove("hidden", "text-red-400");
+        msg.classList.add("text-green-400");
+
+        const formData = new FormData();
+        formData.append("text", text);
+        if (image) formData.append("image", image);
+
+        try {
+          const res = await fetch("/api/upload-doubt", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            msg.textContent = "Doubt uploaded successfully!";
+            form.reset();
+          } else {
+            msg.textContent = data.error || "Failed to upload doubt.";
+            msg.classList.remove("text-green-400");
+            msg.classList.add("text-red-400");
+          }
+        } catch (err) {
+          msg.textContent = "An error occurred. Please try again.";
+          msg.classList.remove("text-green-400");
+          msg.classList.add("text-red-400");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

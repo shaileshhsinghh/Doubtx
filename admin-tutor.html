@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DoubtX - Admin Tutor Panel</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #111827, #0f172a);
+      color: #fff;
+    }
+
+    header {
+      background-color: #1f2937;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #8A2BE2;
+    }
+
+    .card {
+      background-color: #1e293b;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #374151;
+      color: #8A2BE2;
+    }
+
+    tr:nth-child(even) {
+      background-color: #2d3748;
+    }
+
+    .btn {
+      padding: 6px 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+      transition: 0.2s;
+      font-size: 14px;
+    }
+
+    .btn.approve {
+      background-color: #10b981;
+    }
+
+    .btn.reject {
+      background-color: #ef4444;
+    }
+
+    .btn.block {
+      background-color: #f97316;
+    }
+
+    .btn.unblock {
+      background-color: #3b82f6;
+    }
+
+    .status {
+      font-weight: 600;
+    }
+
+    .status.active {
+      color: #10b981;
+    }
+
+    .status.blocked {
+      color: #ef4444;
+    }
+
+    .status.pending {
+      color: #facc15;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>DOUBT<span style="color:#8A2BE2;">X</span> Admin Panel</h1>
+  </header>
+
+  <div class="container">
+
+    <div class="card">
+      <div class="section-title">Pending Tutor Requests</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Tutor Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="pendingTutors">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="section-title">All Tutors</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Tutor Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="allTutors">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    // Sample data - replace with real backend fetch
+    const pendingTutors = [
+      { name: 'Arjun Rao', email: 'arjun@example.com' },
+      { name: 'Sita Devi', email: 'sita@example.com' }
+    ];
+
+    const tutors = [
+      { name: 'Ravi Kumar', status: 'active' },
+      { name: 'Anjali Mishra', status: 'blocked' },
+      { name: 'Karan Shah', status: 'active' }
+    ];
+
+    const pendingContainer = document.getElementById('pendingTutors');
+    const tutorContainer = document.getElementById('allTutors');
+
+    function loadPendingTutors() {
+      pendingContainer.innerHTML = '';
+      pendingTutors.forEach((tutor, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${tutor.name}</td>
+          <td>${tutor.email}</td>
+          <td>
+            <button class="btn approve" onclick="approveTutor(${index})">Approve</button>
+            <button class="btn reject" onclick="rejectTutor(${index})">Reject</button>
+          </td>
+        `;
+        pendingContainer.appendChild(row);
+      });
+    }
+
+    function loadAllTutors() {
+      tutorContainer.innerHTML = '';
+      tutors.forEach((tutor, index) => {
+        const isBlocked = tutor.status === 'blocked';
+        const statusClass = isBlocked ? 'blocked' : 'active';
+        const actionBtn = isBlocked
+          ? `<button class="btn unblock" onclick="toggleBlock(${index})">Unblock</button>`
+          : `<button class="btn block" onclick="toggleBlock(${index})">Block</button>`;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${tutor.name}</td>
+          <td class="status ${statusClass}">${tutor.status}</td>
+          <td>${actionBtn}</td>
+        `;
+        tutorContainer.appendChild(row);
+      });
+    }
+
+    function approveTutor(index) {
+      const approvedTutor = pendingTutors.splice(index, 1)[0];
+      tutors.push({ name: approvedTutor.name, status: 'active' });
+      loadPendingTutors();
+      loadAllTutors();
+      alert(`${approvedTutor.name} approved as tutor.`);
+    }
+
+    function rejectTutor(index) {
+      const rejected = pendingTutors.splice(index, 1)[0];
+      loadPendingTutors();
+      alert(`${rejected.name} rejected.`);
+    }
+
+    function toggleBlock(index) {
+      const tutor = tutors[index];
+      tutor.status = tutor.status === 'blocked' ? 'active' : 'blocked';
+      loadAllTutors();
+    }
+
+    loadPendingTutors();
+    loadAllTutors();
+  </script>
+
+</body>
+</html>
