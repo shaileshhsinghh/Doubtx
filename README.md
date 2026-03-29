@@ -83,6 +83,6 @@ http://localhost:3000
 ---
 
 ## 👨‍💻 Author
-**Built by:** `@yourname` — for EdTech Hackathon 2025
+**Built by:** `@shaileshhsinghh` — for EdTech Hackathon 2025
 
 Feel free to fork, contribute, and customize! 🎓
